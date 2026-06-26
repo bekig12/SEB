@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Download Safe Exam Browser</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --bg: #0b0f1a;
+        --surface: #111827;
+        --card: #161d2e;
+        --border: #1e2d45;
+        --accent: #3b82f6;
+        --accent-glow: rgba(59, 130, 246, 0.18);
+        --accent-dim: rgba(59, 130, 246, 0.08);
+        --text: #f0f4ff;
+        --muted: #7a8aa0;
+        --success: #22c55e;
+        --mono: "JetBrains Mono", monospace;
+      }
+
+      html,
+      body {
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Inter", sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+      }
+
+      /* subtle grid background */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(59, 130, 246, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(59, 130, 246, 0.04) 1px, transparent 1px);
+        background-size: 40px 40px;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .wrapper {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 520px;
+      }
+
+      /* badge */
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--accent-dim);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 5px 14px;
+        font-size: 11px;
+        font-family: var(--mono);
+        color: var(--accent);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-bottom: 1.5rem;
+      }
+      .badge-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent);
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.3;
+        }
+      }
+
+      h1 {
+        font-size: clamp(1.6rem, 5vw, 2.2rem);
+        font-weight: 700;
+        line-height: 1.2;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.75rem;
+      }
+      h1 span {
+        color: var(--accent);
+      }
+
+      .subtitle {
+        font-size: 0.95rem;
+        color: var(--muted);
+        line-height: 1.6;
+        margin-bottom: 2.5rem;
+      }
+
+      /* card */
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 1.75rem;
+        margin-bottom: 1rem;
+        position: relative;
+        overflow: hidden;
+      }
+      .card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--accent),
+          transparent
+        );
+        opacity: 0.5;
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 1.25rem;
+      }
+      .icon-box {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        background: var(--accent-dim);
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        flex-shrink: 0;
+      }
+      .card-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text);
+      }
+      .card-version {
+        font-size: 11px;
+        font-family: var(--mono);
+        color: var(--muted);
+        margin-top: 2px;
+      }
+
+      /* meta row */
+      .meta {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+      }
+      .meta-item {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .meta-label {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        font-family: var(--mono);
+      }
+      .meta-value {
+        font-size: 13px;
+        color: var(--text);
+        font-weight: 500;
+      }
+
+      /* download button */
+      .dl-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        padding: 14px 20px;
+        background: var(--accent);
+        color: #fff;
+        font-size: 0.95rem;
+        font-weight: 600;
+        font-family: "Inter", sans-serif;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        text-decoration: none;
+        transition:
+          background 0.15s,
+          box-shadow 0.15s,
+          transform 0.1s;
+        box-shadow: 0 0 0 0 var(--accent-glow);
+        position: relative;
+        overflow: hidden;
+      }
+      .dl-btn:hover {
+        background: #2563eb;
+        box-shadow: 0 0 24px 4px var(--accent-glow);
+        transform: translateY(-1px);
+      }
+      .dl-btn:active {
+        transform: translateY(0);
+      }
+      .dl-btn svg {
+        flex-shrink: 0;
+      }
+
+      /* progress bar (hidden by default) */
+      .progress-wrap {
+        margin-top: 12px;
+        display: none;
+      }
+      .progress-wrap.show {
+        display: block;
+      }
+      .progress-bar {
+        height: 4px;
+        background: var(--border);
+        border-radius: 999px;
+        overflow: hidden;
+      }
+      .progress-fill {
+        height: 100%;
+        background: var(--accent);
+        border-radius: 999px;
+        width: 0%;
+        transition: width 0.4s ease;
+      }
+      .progress-label {
+        font-size: 11px;
+        color: var(--success);
+        font-family: var(--mono);
+        margin-top: 6px;
+      }
+
+      /* steps */
+      .steps {
+        margin-top: 2rem;
+      }
+      .steps-title {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+        font-family: var(--mono);
+        margin-bottom: 1rem;
+      }
+      .step {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .step:last-child {
+        border-bottom: none;
+      }
+      .step-num {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: var(--accent-dim);
+        border: 1px solid var(--border);
+        font-size: 11px;
+        font-family: var(--mono);
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+      .step-text {
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+      .step-text strong {
+        color: var(--text);
+        font-weight: 500;
+      }
+
+      /* latest badge on card */
+      .card-latest {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: rgba(34, 197, 94, 0.1);
+        border: 1px solid rgba(34, 197, 94, 0.25);
+        border-radius: 999px;
+        padding: 3px 10px;
+        font-size: 10px;
+        font-family: var(--mono);
+        color: var(--success);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-left: auto;
+      }
+      .card-latest-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--success);
+      }
+
+      /* green button variant */
+      .dl-btn.green {
+        background: #16a34a;
+      }
+      .dl-btn.green:hover {
+        background: #15803d;
+        box-shadow: 0 0 24px 4px rgba(34, 197, 94, 0.2);
+      }
+
+      /* footer note */
+      .footer-note {
+        margin-top: 1.5rem;
+        text-align: center;
+        font-size: 11px;
+        color: var(--muted);
+        font-family: var(--mono);
+      }
+      .footer-note a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      .footer-note a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="badge">
+        <span class="badge-dot"></span>
+        Official Release
+      </div>
+
+      <h1>Safe Exam<br /><span>Browser</span> Installer</h1>
+      <p class="subtitle">
+        Download and install the secure exam environment used by universities
+        and schools worldwide.
+      </p>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="icon-box">🔒</div>
+          <div>
+            <div class="card-title">SEB Setup Bundle</div>
+            <div class="card-version">v3.9.0.787 — Windows</div>
+          </div>
+        </div>
+
+        <div class="meta">
+          <div class="meta-item">
+            <span class="meta-label">Platform</span>
+            <span class="meta-value">Windows 10 / 11</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Version</span>
+            <span class="meta-value">3.9.0.787</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Source</span>
+            <span class="meta-value">SourceForge</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Type</span>
+            <span class="meta-value">SetupBundle.exe</span>
+          </div>
+        </div>
+
+        <a
+          id="dlBtn"
+          class="dl-btn"
+          target="_blank"
+          href="https://sf-eu-introserv-1.dl.sourceforge.net/project/seb/seb/SEB_3.9.0/SEB_3.9.0.787_SetupBundle.exe"
+          download
+          onclick="startDownload()"
+        >
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          Download SEB Installer
+        </a>
+
+        <div class="progress-wrap" id="progressWrap">
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <div class="progress-label" id="progressLabel">
+            ⬇ Download started — check your Downloads folder
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: v3.10.1.864 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="icon-box">🛡️</div>
+          <div style="flex: 1">
+            <div class="card-title">SEB-Patch Setup Bundle</div>
+            <div class="card-version">v3.9.0.787 — Windows</div>
+          </div>
+          <div class="card-latest">
+            <span class="card-latest-dot"></span>
+            Latest
+          </div>
+        </div>
+
+        <div class="meta">
+          <div class="meta-item">
+            <span class="meta-label">Platform</span>
+            <span class="meta-value">Windows 10 / 11</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Version</span>
+            <span class="meta-value">3.9.0.787</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Source</span>
+            <span class="meta-value">GitHub</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Type</span>
+            <span class="meta-value">SetupBundle.exe</span>
+          </div>
+        </div>
+
+        <a
+          id="dlBtn2"
+          class="dl-btn green"
+          href="https://github.com/school-cheating/SEBPatch/releases/download/v1.5.2_3.9.0.787/patch-seb.exe"
+          download
+          onclick="startDownload2()"
+        >
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          Download SEB-Patch Installer
+        </a>
+
+        <div class="progress-wrap" id="progressWrap2">
+          <div class="progress-bar">
+            <div
+              class="progress-fill"
+              id="progressFill2"
+              style="background: var(--success)"
+            ></div>
+          </div>
+          <div class="progress-label" id="progressLabel2">
+            ⬇ Download started — check your Downloads folder
+          </div>
+        </div>
+      </div>
+
+      <div class="steps">
+        <div class="steps-title">After downloading</div>
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-text">
+            <strong>Right-click</strong> the installer →
+            <strong>Run as administrator</strong>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-text">
+            Click <strong>Next</strong> through the wizard and then
+            <strong>Install</strong>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-text">
+            Once installed, <strong>double-click your .seb file</strong> to
+            launch the exam
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-text">
+            To exit SEB after the exam, use the
+            <strong>quit password</strong> provided by your institution
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        Official source ·
+        <a href="https://safeexambrowser.org" target="_blank"
+          >safeexambrowser.org</a
+        >
+        &nbsp;·&nbsp;
+        <a
+          href="https://github.com/SafeExamBrowser/seb-win-refactoring/releases"
+          target="_blank"
+          >GitHub releases</a
+        >
+      </div>
+    </div>
+
+    <script>
+      function animateProgress(wrapId, fillId, labelId) {
+        const wrap = document.getElementById(wrapId);
+        const fill = document.getElementById(fillId);
+        const label = document.getElementById(labelId);
+        wrap.classList.add("show");
+        let w = 0;
+        const iv = setInterval(() => {
+          w += Math.random() * 18;
+          if (w >= 95) {
+            w = 95;
+            clearInterval(iv);
+          }
+          fill.style.width = w + "%";
+        }, 300);
+        setTimeout(() => {
+          fill.style.width = "100%";
+          label.textContent = "✅ Download complete — run the installer!";
+        }, 5000);
+      }
+      function startDownload() {
+        animateProgress("progressWrap", "progressFill", "progressLabel");
+      }
+      function startDownload2() {
+        animateProgress("progressWrap2", "progressFill2", "progressLabel2");
+      }
+    </script>
+  </body>
+</html>
